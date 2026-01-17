@@ -1,0 +1,1042 @@
+Francisco Audino Re <franaudino.re@gmail.com>
+
+    <!DOCTYPE html>
+    <html lang="es">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Lingrow – Aprende Inglés (A1–C2)</title>
+        <meta name="description"
+            content="App web gamificada para aprender inglés: gramática, listening, writing y speaking de A1 a C2." />
+        <style>
+            :root {
+                --bg: #3c5f6c;
+                /* slate-900 */
+                --card: #8d894aee;
+                /* gray-900 */
+                --muted: #94a3b8;
+                /* slate-400 */
+                --text: #e2e8f0;
+                /* slate-200 */
+                --brand: #7c3aed;
+                /* violet-600 */
+                --brand-2: #06b6d4;
+                /* cyan-500 */
+                --ok: #22c55e;
+                --warn: #f59e0b;
+                --err: #ef4444;
+                --glass: rgba(255, 255, 255, .06);
+                --shadow: 0 10px 30px rgba(0, 0, 0, .35);
+                --radius: 18px;
+            }
+
+            * {
+                box-sizing: border-box
+            }
+
+            html,
+            body {
+                height: 100%
+            }
+
+            body {
+                margin: 0;
+                background: radial-gradient(1200px 600px at 10% -10%, #1e293b, transparent), radial-gradient(900px 500px at 120% 0%, #0b1022, transparent), linear-gradient(120deg, #0b1022, #0a0f1d);
+                color: var(--text);
+                font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial;
+            }
+
+            .app {
+                display: grid;
+                grid-template-columns: 280px 1fr;
+                gap: 20px;
+                padding: 22px;
+                max-width: 1300px;
+                margin: auto
+            }
+
+            header {
+                grid-column: 1/-1;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                background: var(--glass);
+                padding: 14px 16px;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                backdrop-filter: blur(8px);
+                position: sticky;
+                top: 12px;
+                z-index: 5
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px
+            }
+
+            .logo svg {
+                width: 36px;
+                height: 36px
+            }
+
+            .title {
+                font-weight: 800;
+                letter-spacing: .3px
+            }
+
+            .streak {
+                margin-left: auto;
+                display: flex;
+                gap: 12px;
+                align-items: center
+            }
+
+            .chip {
+                background: linear-gradient(135deg, #1f2937, #0f172a);
+                border: 1px solid #243140;
+                padding: 8px 12px;
+                border-radius: 999px;
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                font-weight: 600
+            }
+
+            .chip svg {
+                width: 18px;
+                height: 18px
+            }
+
+            /* Sidebar */
+            aside {
+                background: var(--glass);
+                border: 1px solid #1f2937;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                padding: 16px;
+                height: fit-content;
+                position: sticky;
+                top: 78px
+            }
+
+            .levels {
+                display: grid;
+                gap: 10px
+            }
+
+            .lvl {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 12px 14px;
+                border-radius: 14px;
+                background: linear-gradient(180deg, #0b1224, #0a0f1d);
+                border: 1px solid #1c2540;
+                cursor: pointer;
+                transition: .2s transform, .2s border-color
+            }
+
+            .lvl:hover {
+                transform: translateY(-2px);
+                border-color: #2b3b6a
+            }
+
+            .lvl.active {
+                outline: 2px solid var(--brand);
+            }
+
+            .badge {
+                font-weight: 800;
+                font-size: 12px;
+                color: #c7d2fe;
+                background: #312e81;
+                border: 1px solid #4338ca;
+                padding: 4px 8px;
+                border-radius: 999px
+            }
+
+            /* Main */
+            main {
+                display: grid;
+                gap: 20px
+            }
+
+            .cards {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 16px
+            }
+
+            .card {
+                background: var(--glass);
+                border: 1px solid #1f2937;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                padding: 18px;
+                min-height: 150px;
+                position: relative;
+                overflow: hidden
+            }
+
+            .card h3 {
+                margin: 0 0 6px;
+                font-size: 18px
+            }
+
+            .card p {
+                margin: 0;
+                color: var(--muted)
+            }
+
+            .card button {
+                position: absolute;
+                bottom: 16px;
+                right: 16px
+            }
+
+            .btn {
+                appearance: none;
+                border: 0;
+                background: linear-gradient(135deg, var(--brand), var(--brand-2));
+                color: white;
+                padding: 10px 14px;
+                border-radius: 12px;
+                font-weight: 700;
+                cursor: pointer;
+                box-shadow: 0 8px 20px rgba(124, 58, 237, .35);
+                transition: .15s transform
+            }
+
+            .btn:hover {
+                transform: translateY(-2px)
+            }
+
+            .progress {
+                background: #0b1020;
+                border: 1px solid #1c2540;
+                padding: 14px;
+                border-radius: 14px
+            }
+
+            .bar {
+                height: 12px;
+                background: #0b1020;
+                border: 1px solid #1f2937;
+                border-radius: 999px;
+                overflow: hidden
+            }
+
+            .bar>div {
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(90deg, var(--brand), var(--brand-2));
+                transition: width .6s ease
+            }
+
+            .stats {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-top: 10px
+            }
+
+            .stat {
+                background: #0b1020;
+                border: 1px solid #1f2937;
+                border-radius: 12px;
+                padding: 8px 12px;
+                font-weight: 700
+            }
+
+            /* Activity modal */
+            .modal {
+                position: fixed;
+                inset: 0;
+                display: none;
+                place-items: center;
+                background: rgba(0, 0, 0, .55);
+                padding: 20px
+            }
+
+            .modal.open {
+                display: grid
+            }
+
+            .sheet {
+                width: min(860px, 100%);
+                background: #0a0f1d;
+                border: 1px solid #1c2540;
+                border-radius: 20px;
+                box-shadow: var(--shadow);
+                overflow: hidden
+            }
+
+            .sheet header {
+                position: unset;
+                background: linear-gradient(135deg, #101c34, #0b1224);
+                border-bottom: 1px solid #1f2a49
+            }
+
+            .sheet main {
+                padding: 20px
+            }
+
+            .choices {
+                display: grid;
+                gap: 10px;
+                margin-top: 14px
+            }
+
+            .choice {
+                padding: 12px;
+                border-radius: 12px;
+                border: 1px solid #223056;
+                background: #5d71a6;
+                cursor: pointer
+            }
+
+            .choice.correct {
+                border-color: var(--ok);
+                background: rgba(34, 197, 94, .1)
+            }
+
+            .choice.wrong {
+                border-color: var(--err);
+                background: rgba(239, 68, 68, .1)
+            }
+
+            .controls {
+                display: flex;
+                gap: 10px;
+                margin-top: 16px
+            }
+
+            .pill {
+                display: inline-flex;
+                gap: 8px;
+                align-items: center;
+                background: #0b1224;
+                border: 1px solid #1e2a4d;
+                padding: 6px 10px;
+                border-radius: 999px;
+                font-weight: 700
+            }
+
+            footer {
+                grid-column: 1/-1;
+                color: var(--muted);
+                text-align: center;
+                padding: 20px
+            }
+
+            /* Cute SVG mascot bubbles */
+            .bubble {
+                position: absolute;
+                opacity: .25;
+                filter: blur(2px)
+            }
+
+            .bubble--1 {
+                right: -20px;
+                top: -20px
+            }
+
+            .bubble--2 {
+                left: -25px;
+                bottom: -25px
+            }
+
+            /* Responsive */
+            @media (max-width: 980px) {
+                .app {
+                    grid-template-columns: 1fr
+                }
+
+                aside {
+                    position: unset
+                }
+
+                .cards {
+                    grid-template-columns: repeat(2, minmax(0, 1fr))
+                }
+            }
+
+            @media (max-width: 620px) {
+                .cards {
+                    grid-template-columns: 1fr
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="app">
+            <header>
+                <div class="logo" aria-label="Lingrow – Aprende Inglés">
+                    <!-- Inline SVG logo -->
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0" stop-color="#7c3aed" />
+                                <stop offset="1" stop-color="#06b6d4" />
+                            </linearGradient>
+                        </defs>
+                        <rect rx="14" width="64" height="64" fill="url(#g)" />
+                        <path d="M18 42c8-9 12-19 12-31 7 9 11 17 16 23" stroke="#fff" stroke-width="4"
+                            stroke-linecap="round" />
+                        <circle cx="48" cy="44" r="6" fill="#fff" />
+                    </svg>
+                    <div class="title">Lingrow <span style="color:var(--muted); font-weight:600">· English A1–C2</span>
+                    </div>
+                </div>
+                <div class="streak">
+                    <div class="chip" title="Racha diaria"><svg viewBox="0 0 24 24" fill="currentColor"
+                            aria-hidden="true">
+                            <path
+                                d="M12 2c1.5 3 .5 6-2 8 3-.5 5-3 5-6 2 2 3 5 2 8 2-1 3-3 3-5 2 3 2 7 0 10-2 3-6 5-8 5s-6-2-8-5C1 14 1 10 3 7c0 2 1 4 3 5-1-3 0-6 2-8 0 3 1 5 4 6-1-2-1-5 0-8z" />
+                        </svg><span id="streak">0</span> 🔥</div>
+                    <div class="chip" title="Puntos acumulados">XP <span id="xp">0</span></div>
+                </div>
+            </header>
+
+            <aside aria-label="Selecciona nivel">
+                <h3 style="margin:6px 0 12px">Niveles CEFR</h3>
+                <div class="levels" id="levels"></div>
+            </aside>
+
+            <main>
+                <section class="progress" aria-label="Progreso general">
+                    <div
+                        style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px">
+                        <strong>Meta diaria: <span id="dailyGoal">5</span> lecciones</strong>
+                        <span class="pill">Completadas hoy: <span id="doneToday">0</span></span>
+                    </div>
+                    <div class="bar" aria-hidden="true">
+                        <div id="progressBar"></div>
+                    </div>
+                    <div class="stats" role="list">
+                        <div class="stat" role="listitem">Lecciones: <span id="lessonsCount">0</span></div>
+                        <div class="stat" role="listitem">Precisión: <span id="accuracy">0%</span></div>
+                        <div class="stat" role="listitem">Insignias: <span id="badgesCount">0</span></div>
+                    </div>
+                </section>
+
+                <section class="cards" aria-label="Modos de práctica">
+                    <article class="card" id="cardGrammar">
+                        <svg class="bubble bubble--1" width="120" height="120" viewBox="0 0 120 120"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="60" cy="60" r="60" fill="#7c3aed" />
+                        </svg>
+                        <h3>Gramática</h3>
+                        <p>Elige la opción correcta. Explicaciones claras.</p>
+                        <button class="btn" onclick="startActivity('grammar')">¡Empezar!</button>
+                    </article>
+                    <article class="card" id="cardListening">
+                        <svg class="bubble bubble--2" width="180" height="180" viewBox="0 0 180 180"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="90" cy="90" r="90" fill="#06b6d4" />
+                        </svg>
+                        <h3>Listening</h3>
+                        <p>Escucha y escribe lo que oyes (TTS).</p>
+                        <button class="btn" onclick="startActivity('listening')">¡A escuchar!</button>
+                    </article>
+                    <article class="card" id="cardWriting">
+                        <h3>Writing</h3>
+                        <p>Escribe frases cortas y recibe feedback.</p>
+                        <button class="btn" onclick="startActivity('writing')">¡A escribir!</button>
+                    </article>
+                    <article class="card" id="cardSpeaking">
+                        <h3>Speaking</h3>
+                        <p>Pronuncia la frase y compara tu resultado (ASR).</p>
+                        <button class="btn" onclick="startActivity('speaking')">¡A hablar!</button>
+                    </article>
+                </section>
+
+                <section class="card" aria-label="Galería motivacional">
+                    <h3>Motivación visual</h3>
+                    <p>Aprender es un viaje. ¡Cada día cuenta! 🧭</p>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px">
+                        <!-- Tres imágenes SVG "bonitas" integradas -->
+                        <img alt="Astronauta leyendo" width="160" height="120"
+                            src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 140'><defs><linearGradient id='a' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%237c3aed'/><stop offset='1' stop-color='%2306b6d4'/></linearGradient></defs><rect width='200' height='140' rx='16' fill='%230b1224'/><circle cx='160' cy='40' r='20' fill='url(%23a)'/><g fill='%23c7d2fe'><circle cx='60' cy='70' r='28'/><rect x='42' y='95' width='36' height='14' rx='7'/><rect x='50' y='55' width='20' height='10' rx='5'/></g><rect x='20' y='20' width='90' height='14' rx='7' fill='%231e293b'/><rect x='20' y='40' width='70' height='10' rx='5' fill='%231e293b'/></svg>" />
+                        <img alt="Montañas con meta" width="160" height="120"
+                            src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 140'><rect width='200' height='140' rx='16' fill='%230a0f1d'/><path d='M0 120 L60 70 L100 110 L140 60 L200 120 Z' fill='%231e293b'/><circle cx='150' cy='40' r='18' fill='%2306b6d4'/><rect x='135' y='25' width='30' height='6' rx='3' fill='%237c3aed'/></svg>" />
+                        <img alt="Trofeo por racha" width="160" height="120"
+                            src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 140'><rect width='200' height='140' rx='16' fill='%230a0f1d'/><rect x='80' y='30' width='40' height='50' rx='8' fill='%237c3aed'/><rect x='70' y='80' width='60' height='12' rx='6' fill='%23c7d2fe'/><circle cx='100' cy='56' r='10' fill='%23fff'/></svg>" />
+                    </div>
+                </section>
+            </main>
+
+            <footer>© <span id="year"></span> Lingrow. Hecho con ❤️ para aprender cada día.</footer>
+        </div>
+
+        <!-- Modal de actividad -->
+        <div class="modal" id="modal">
+            <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="actTitle">
+                <header style="display:flex; align-items:center; justify-content:space-between">
+                    <div style="display:flex; align-items:center; gap:10px">
+                        <strong id="actTitle">Actividad</strong>
+                        <span class="pill" id="actLevel">A1</span>
+                        <span class="pill" id="actMode">mode</span>
+                    </div>
+                    <button class="btn" onclick="closeModal()">Cerrar</button>
+                </header>
+                <main>
+                    <div id="activityContainer"></div>
+                    <div class="controls">
+                        <button class="btn" id="btnCheck" onclick="checkAnswer()">Comprobar</button>
+                        <button class="btn" id="btnNext" onclick="nextItem()" style="display:none">Siguiente ▶</button>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <script>
+            // ----------------------------
+            // Datos base por nivel y modo
+            // ----------------------------
+            const LEVELS = [
+                { code: 'A1', name: 'Básico' },
+                { code: 'A2', name: 'Elemental' },
+                { code: 'B1', name: 'Intermedio' },
+                { code: 'B2', name: 'Intermedio Alto' },
+                { code: 'C1', name: 'Avanzado' },
+                { code: 'C2', name: 'Maestría' }
+            ];
+
+            const BANK = {
+                grammar: {
+                    A1: [
+                        { q: 'Choose the correct option: "I ___ a student."', choices: ['am', 'is', 'are'], a: 0, tip: 'Con "I" usamos "am".' },
+                        { q: 'Complete: "She ___ from Spain."', choices: ['are', 'is', 'am'], a: 1, tip: 'Con "she/he/it" usamos "is".' },
+                        { q: 'Select: "We ___ happy."', choices: ['is', 'are', 'am'], a: 1, tip: 'Con "we/you/they" usamos "are".' },
+                        { q: 'Choose: "He ___ a car."', choices: ['have', 'has', 'haves'], a: 1, tip: 'Con "he/she/it" usamos "has".' },
+                        { q: 'Complete: "They ___ at home."', choices: ['is', 'are', 'am'], a: 1, tip: 'Con "they" usamos "are".' },
+                    ],
+                    A2: [
+                        { q: 'Pick the correct sentence', choices: ['He don\'t like tea.', 'He doesn\'t like tea.', 'He not like tea.'], a: 1, tip: 'Tercera persona negativa: does not + base.' },
+                        { q: 'Choose: "I ___ to the cinema yesterday."', choices: ['go', 'went', 'gone'], a: 1, tip: 'Pasado simple: "went".' },
+                        { q: 'Select: "They ___ finished their homework."', choices: ['has', 'have', 'had'], a: 1, tip: 'Presente perfecto: "have".' },
+                        { q: 'Complete: "She ___ play tennis."', choices: ['can', 'cans', 'can\'t'], a: 0, tip: 'Modal "can" no cambia.' },
+                        { q: 'Choose: "We ___ English every day."', choices: ['study', 'studies', 'studied'], a: 0, tip: 'Con "we" usamos la base.' },
+                    ],
+                    B1: [
+                        { q: 'Choose: If it ___ tomorrow, we will stay home.', choices: ['rains', 'rained', 'is raining'], a: 0, tip: 'First conditional: If + present, will + base.' },
+                        { q: 'Select: "I have lived here ___ 2010."', choices: ['since', 'for', 'from'], a: 0, tip: '"Since" + año.' },
+                        { q: 'Pick: "She ___ to Paris last year."', choices: ['go', 'went', 'gone'], a: 1, tip: 'Pasado simple: "went".' },
+                        { q: 'Complete: "They ___ watching TV when I arrived."', choices: ['were', 'was', 'are'], a: 0, tip: 'Pasado continuo: "were".' },
+                        { q: 'Choose: "He ___ already finished."', choices: ['has', 'have', 'had'], a: 0, tip: 'Presente perfecto: "has".' },
+                    ],
+                    B2: [
+                        { q: 'Pick the formal option:', choices: ['Can you give me a hand?', 'Would you mind helping me?', 'Give me a hand!'], a: 1, tip: '"Would you mind…" es más formal.' },
+                        { q: 'Choose: "If I ___ you, I would apologize."', choices: ['was', 'were', 'am'], a: 1, tip: 'Second conditional: "were".' },
+                        { q: 'Select: "She ___ to have finished."', choices: ['claims', 'claim', 'claimed'], a: 0, tip: 'Presente: "claims".' },
+                        { q: 'Complete: "The book ___ by the author."', choices: ['was written', 'wrote', 'is writing'], a: 0, tip: 'Pasiva: "was written".' },
+                        { q: 'Choose: "He ___ to work."', choices: ['used', 'is used', 'used to'], a: 2, tip: '"Used to" para hábitos pasados.' },
+                    ],
+                    C1: [
+                        { q: 'Select the best connector: "She studied hard; ___, she passed."', choices: ['nevertheless', 'consequently', 'however'], a: 1, tip: 'Consequently = como consecuencia.' },
+                        { q: 'Choose: "Had I ___, I would have helped."', choices: ['know', 'knew', 'known'], a: 2, tip: 'Tercera condicional: "known".' },
+                        { q: 'Pick: "It is essential that he ___ present."', choices: ['be', 'is', 'was'], a: 0, tip: 'Subjuntivo: "be".' },
+                        { q: 'Complete: "No sooner ___ the phone rang."', choices: ['had I arrived than', 'I had arrived when', 'had arrived'], a: 0, tip: 'Estructura inversa.' },
+                        { q: 'Choose: "She speaks English ___ fluently."', choices: ['most', 'highly', 'extremely'], a: 2, tip: '"Extremely" para adverbio de grado.' },
+                    ],
+                    C2: [
+                        { q: 'Choose the most precise word: "The results were ___ to expectations."', choices: ['similar', 'tantamount', 'close'], a: 1, tip: '"Tantamount to" = equivalente a.' },
+                        { q: 'Select: "He gave a ___ account of the events."', choices: ['meticulous', 'metaphorical', 'mediocre'], a: 0, tip: '"Meticulous" = detallado.' },
+                        { q: 'Pick: "Her argument was ___ by evidence."', choices: ['substantiated', 'substituted', 'subdued'], a: 0, tip: '"Substantiated" = respaldado.' },
+                        { q: 'Complete: "The proposal was ___ received."', choices: ['enthusiastically', 'enthusiastic', 'enthusiasm'], a: 0, tip: 'Adverbio: "enthusiastically".' },
+                        { q: 'Choose: "He spoke ___ about the topic."', choices: ['eloquently', 'eloquence', 'elocution'], a: 0, tip: '"Eloquently" = con elocuencia.' },
+                    ],
+                },
+                listening: {
+                    // Usamos speechSynthesis para reproducir la oración
+                    A1: [
+                        { text: 'Good morning. How are you?' },
+                        { text: 'I live in Madrid.' },
+                        { text: 'What is your name?' },
+                        { text: 'This is my book.' },
+                        { text: 'I like apples.' },
+                    ],
+                    A2: [
+                        { text: 'Could you help me with this bag?' },
+                        { text: 'I am going to the supermarket.' },
+                        { text: 'She plays tennis every weekend.' },
+                        { text: 'We are watching a movie.' },
+                        { text: 'He doesn\'t like coffee.' },
+                    ],
+                    B1: [
+                        { text: 'It might rain later this afternoon.' },
+                        { text: 'She has already finished her homework.' },
+                        { text: 'I have lived here since 2010.' },
+                        { text: 'They were watching TV when I arrived.' },
+                        { text: 'He has just left the office.' },
+                    ],
+                    B2: [
+                        { text: 'She has been working remotely since last year.' },
+                        { text: 'Would you mind helping me with this task?' },
+                        { text: 'The book was written by the author.' },
+                        { text: 'He used to travel a lot.' },
+                        { text: 'If I were you, I would apologize.' },
+                    ],
+                    C1: [
+                        { text: 'Had I known, I would have acted differently.' },
+                        { text: 'It is essential that he be present.' },
+                        { text: 'No sooner had I arrived than the phone rang.' },
+                        { text: 'She speaks English extremely fluently.' },
+                        { text: 'Consequently, she passed the exam.' },
+                    ],
+                    C2: [
+                        { text: 'Not only was the proposal compelling, it was also meticulously researched.' },
+                        { text: 'Her argument was substantiated by evidence.' },
+                        { text: 'He gave a meticulous account of the events.' },
+                        { text: 'The results were tantamount to expectations.' },
+                        { text: 'He spoke eloquently about the topic.' },
+                    ],
+                },
+                writing: {
+                    A1: [
+                        { prompt: 'Escribe una redacción sobre tu rutina diaria. Debe tener entre 50 y 100 palabras.' }
+                    ],
+                    A2: [
+                        { prompt: 'Redacta un texto sobre tus vacaciones favoritas. Debe tener entre 50 y 100 palabras.' }
+                    ],
+                    B1: [
+                        { prompt: 'Describe un problema en tu ciudad y su posible solución. Entre 100 y 150 palabras.' }
+                    ],
+                    B2: [
+                        { prompt: 'Redacta una opinión sobre el uso de la tecnología en la educación. Entre 100 y 150 palabras.' }
+                    ],
+                    C1: [
+                        { prompt: 'Analiza los efectos del cambio climático en la sociedad moderna. Entre 150 y 200 palabras.' }
+                    ],
+                    C2: [
+                        { prompt: 'Escribe un ensayo crítico sobre la globalización y su impacto cultural. Entre 150 y 200 palabras.' }
+                    ],
+                },
+                speaking: {
+                    A1: [
+                        { text: 'My name is John. Nice to meet you.' },
+                        { text: 'I am from Spain.' },
+                        { text: 'I like playing football.' },
+                        { text: 'This is my friend Anna.' },
+                        { text: 'I am a student.' },
+                    ],
+                    A2: [
+                        { text: 'I would like a cup of coffee, please.' },
+                        { text: 'Can you help me with my homework?' },
+                        { text: 'I am going to the park.' },
+                        { text: 'She plays the piano very well.' },
+                        { text: 'We are watching a movie tonight.' },
+                    ],
+                    B1: [
+                        { text: 'I\'m looking forward to visiting your country next summer.' },
+                        { text: 'She has already finished her project.' },
+                        { text: 'I have lived here since 2010.' },
+                        { text: 'They were watching TV when I arrived.' },
+                        { text: 'He has just left the office.' },
+                    ],
+                    B2: [
+                        { text: 'If I had known about the delay, I would have left earlier.' },
+                        { text: 'She has been working remotely since last year.' },
+                        { text: 'Would you mind helping me with this task?' },
+                        { text: 'The book was written by the author.' },
+                        { text: 'He used to travel a lot.' },
+                    ],
+                    C1: [
+                        { text: 'What are the implications of climate change for urban planning?' },
+                        { text: 'Had I known, I would have acted differently.' },
+                        { text: 'It is essential that he be present.' },
+                        { text: 'No sooner had I arrived than the phone rang.' },
+                        { text: 'She speaks English extremely fluently.' },
+                    ],
+                    C2: [
+                        { text: 'Discuss how innovation ecosystems foster breakthrough technologies.' },
+                        { text: 'Not only was the proposal compelling, it was also meticulously researched.' },
+                        { text: 'Her argument was substantiated by evidence.' },
+                        { text: 'He gave a meticulous account of the events.' },
+                        { text: 'He spoke eloquently about the topic.' },
+                    ],
+                }
+            };
+
+            // ----------------------------
+            // Estado, progreso y utilidades
+            // ----------------------------
+            const $ = (sel, root = document) => root.querySelector(sel);
+            const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+            const STATE = JSON.parse(localStorage.getItem('lingrow_state') || '{}');
+            if (!STATE.level) STATE.level = 'A1';
+            if (!STATE.xp) STATE.xp = 0;
+            if (!STATE.doneToday) STATE.doneToday = 0;
+            if (!STATE.lessons) STATE.lessons = 0;
+            if (!STATE.correct) STATE.correct = 0;
+            if (!STATE.attempts) STATE.attempts = 0;
+            if (!STATE.badges) STATE.badges = [];
+
+            function save() { localStorage.setItem('lingrow_state', JSON.stringify(STATE)); }
+
+            // Streak
+            function updateStreak() {
+                const today = new Date().toDateString();
+                const last = localStorage.getItem('lingrow_last_day');
+                let streak = Number(localStorage.getItem('lingrow_streak') || 0);
+                if (last !== today) {
+                    const y = new Date(Date.now() - 86400000).toDateString();
+                    streak = (last === y) ? streak + 1 : 1;
+                    localStorage.setItem('lingrow_last_day', today);
+                    localStorage.setItem('lingrow_streak', String(streak));
+                    STATE.doneToday = 0; save();
+                }
+                $('#streak').textContent = streak;
+            }
+
+            function fmtPct(n) { return (n * 100).toFixed(0) + "%" }
+            function refreshUI() {
+                $('#xp').textContent = STATE.xp;
+                $('#doneToday').textContent = STATE.doneToday;
+                $('#lessonsCount').textContent = STATE.lessons;
+                const acc = STATE.attempts ? STATE.correct / STATE.attempts : 0;
+                $('#accuracy').textContent = fmtPct(acc);
+                $('#progressBar').style.width = Math.min(100, (STATE.doneToday / 5) * 100) + '%';
+                $('#badgesCount').textContent = STATE.badges.length;
+                $$('#levels .lvl').forEach(el => el.classList.toggle('active', el.dataset.level === STATE.level));
+                $('#year').textContent = new Date().getFullYear();
+                updateStreak();
+            }
+
+            // Render niveles
+            const levelsWrap = $('#levels');
+            LEVELS.forEach(l => {
+                const item = document.createElement('button');
+                item.className = 'lvl'; item.dataset.level = l.code;
+                item.innerHTML = `<strong>${l.code}</strong><span class="badge">${l.name}</span>`;
+                item.onclick = () => { STATE.level = l.code; save(); refreshUI(); };
+                levelsWrap.appendChild(item);
+            });
+
+            // ----------------------------
+            // Modal y flujo de actividades
+            // ----------------------------
+            let CURRENT = { mode: 'grammar', index: 0, data: [], answered: false };
+
+            function startActivity(mode) {
+                CURRENT.mode = mode; CURRENT.index = 0; CURRENT.answered = false;
+                const lvl = STATE.level;
+                const pool = BANK[mode][lvl];
+                CURRENT.data = shuffle(pool).slice(0, 5); // 5 items por sesión
+                $('#actTitle').textContent = titleFor(mode);
+                $('#actLevel').textContent = lvl;
+                $('#actMode').textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+                $('#btnNext').style.display = 'none';
+                $('#btnCheck').style.display = 'inline-flex';
+                renderCurrent();
+                openModal();
+            }
+
+            function titleFor(mode) {
+                return { grammar: 'Gramática', listening: 'Listening', writing: 'Writing', speaking: 'Speaking' }[mode] || 'Actividad';
+            }
+
+            function renderCurrent() {
+                // Siempre mostrar "Comprobar" y ocultar "Siguiente" al cargar un nuevo ejercicio
+                $('#btnCheck').style.display = 'inline-flex';
+                $('#btnNext').style.display = 'none';
+
+                const c = $('#activityContainer'); c.innerHTML = '';
+                const item = CURRENT.data[CURRENT.index];
+                if (!item) {
+                    c.innerHTML = `<h2>¡Sesión completada! 🎉</h2><p>+20 XP</p>`;
+                    gainXP(20); STATE.lessons++; STATE.doneToday++; maybeBadge(); save(); refreshUI();
+                    $('#btnCheck').style.display = 'none';
+                    $('#btnNext').style.display = 'none';
+                    return;
+                }
+                if (CURRENT.mode === 'grammar') renderGrammar(item, c);
+                if (CURRENT.mode === 'listening') renderListening(item, c);
+                if (CURRENT.mode === 'writing') renderWriting(item, c);
+                if (CURRENT.mode === 'speaking') renderSpeaking(item, c);
+            }
+
+            function renderGrammar(item, c) {
+                const q = document.createElement('div');
+                q.innerHTML = `<h2 style="margin:0 0 8px">${item.q}</h2><small style="color:var(--muted)">Nivel ${STATE.level}</small>`;
+                const box = document.createElement('div'); box.className = 'choices';
+                item.choices.forEach((ch, i) => {
+                    const btn = document.createElement('button'); btn.className = 'choice'; btn.textContent = ch;
+                    btn.onclick = () => selectChoice(i, box);
+                    box.appendChild(btn);
+                });
+                c.append(q, box);
+            }
+
+            function renderListening(item, c) {
+                const text = item.text;
+                const p = document.createElement('p'); p.textContent = 'Pulsa ▶ para escuchar y escribe exactamente lo que oigas.';
+                const btn = document.createElement('button'); btn.className = 'btn'; btn.textContent = '▶ Reproducir';
+                btn.onclick = () => speak(text);
+                const input = document.createElement('textarea'); input.placeholder = 'Escribe aquí…'; input.style.width = '100%'; input.style.minHeight = '80px'; input.id = 'answerText';
+                c.append(p, btn, input);
+                c.dataset.correct = text.toLowerCase();
+            }
+
+            function renderWriting(item, c) {
+                const p = document.createElement('p'); p.textContent = item.prompt;
+                const input = document.createElement('textarea'); input.placeholder = 'Escribe aquí…'; input.style.width = '100%'; input.style.minHeight = '120px'; input.id = 'answerText';
+                const hint = document.createElement('small'); hint.style.color = 'var(--muted)'; hint.textContent = 'Consejo: usa puntuación y revisa mayúsculas.';
+                c.append(p, input, hint);
+                c.dataset.correct = ''; // evaluación por longitud/claridad simple
+            }
+
+            function renderSpeaking(item, c) {
+                const p = document.createElement('p'); p.textContent = 'Pronuncia la frase en inglés. Pulsa 🎤 para empezar y luego compara.';
+                const target = document.createElement('div'); target.className = 'pill'; target.textContent = 'Objetivo: ' + item.text;
+                const mic = document.createElement('button'); mic.className = 'btn'; mic.textContent = '🎤 Hablar'; mic.onclick = startRecognition;
+                const out = document.createElement('div'); out.id = 'asrOut'; out.style.marginTop = '8px'; out.style.color = 'var(--muted)'; out.textContent = '(Transcripción aparecerá aquí)';
+                c.append(p, target, mic, out);
+                c.dataset.correct = item.text.toLowerCase();
+            }
+
+            let selectedIndex = -1;
+            function selectChoice(i, box) { selectedIndex = i; $$('.choice', box).forEach((b, j) => { b.classList.toggle('correct', j === i); b.classList.remove('wrong'); }); }
+
+            function checkAnswer() {
+                const item = CURRENT.data[CURRENT.index];
+                STATE.attempts++; // intento global
+                if (CURRENT.mode === 'grammar') {
+                    if (selectedIndex === -1) return toast('Elige una opción');
+                    const correct = selectedIndex === item.a;
+                    markChoices(correct, item.tip);
+                    tally(correct);
+                    if (correct) {
+                        toast('Respuesta correcta');
+                        $('#btnCheck').style.display = 'none';
+                        $('#btnNext').style.display = 'inline-flex';
+                        CURRENT.answered = true;
+                    } else {
+                        toast('Respuesta incorrecta');
+                        $('#btnCheck').style.display = 'inline-flex';
+                        $('#btnNext').style.display = 'none';
+                        CURRENT.answered = false;
+                    }
+                }
+                // ...resto de modos igual que antes...
+                else if (CURRENT.mode === 'listening') {
+                    const val = ($('#answerText').value || '').trim().toLowerCase();
+                    const correct = similarity(val, $('#activityContainer').dataset.correct) > 0.85;
+                    showTextResult(correct, `Correcto: "${item.text}"`);
+                    tally(correct);
+                    if (correct) {
+                        toast('Respuesta correcta');
+                        $('#btnCheck').style.display = 'none';
+                        $('#btnNext').style.display = 'inline-flex';
+                        CURRENT.answered = true;
+                    } else {
+                        toast('Respuesta incorrecta');
+                        $('#btnCheck').style.display = 'inline-flex';
+                        $('#btnNext').style.display = 'none';
+                        CURRENT.answered = false;
+                    }
+                }
+                else if (CURRENT.mode === 'writing') {
+                    const val = ($('#answerText').value || '').trim();
+                    // Contar palabras
+                    const wordCount = (val.match(/\b\w+('\w+)?\b/g) || []).length;
+                    let minWords = 0, maxWords = 0;
+                    if (STATE.level === 'A1' || STATE.level === 'A2') { minWords = 50; maxWords = 100; }
+                    else if (STATE.level === 'B1' || STATE.level === 'B2') { minWords = 100; maxWords = 150; }
+                    else { minWords = 150; maxWords = 200; }
+
+                    let errorMsg = '';
+                    if (wordCount < minWords) {
+                        errorMsg = `Tu texto es demasiado corto. Escribe al menos ${minWords} palabras.`;
+                    } else if (wordCount > maxWords) {
+                        errorMsg = `Tu texto es demasiado largo. No debe superar las ${maxWords} palabras.`;
+                    } else if (!/^[A-ZÁÉÍÓÚÜÑ]/.test(val)) {
+                        errorMsg = 'El texto debe empezar con mayúscula.';
+                    } else if (!/[.!?]$/.test(val)) {
+                        errorMsg = 'El texto debe terminar con punto, signo de exclamación o interrogación.';
+                    } else if (/[^a-zA-Z0-9áéíóúüÁÉÍÓÚÜñÑ.,;:!?()\s'’\-]/.test(val)) {
+                        errorMsg = 'Hay caracteres no permitidos o errores de ortografía evidentes.';
+                    } else {
+                        // Comprobar que después de cada punto/interrogación/exclamación
+                        // la siguiente letra inicial de la siguiente oración sea mayúscula.
+                        // Ignoramos caracteres de cierre como comillas, paréntesis o corchetes
+                        // entre el signo de puntuación y la letra.
+                        const re = /[.!?]["'”’\)\]]*\s*([A-Za-zÁÉÍÓÚÜÑ])/g;
+                        let m;
+                        while ((m = re.exec(val)) !== null) {
+                            const ch = m[1];
+                            if (ch && ch === ch.toLowerCase()) {
+                                errorMsg = 'Después de cada punto debe ir mayúscula en la siguiente oración.';
+                                break;
+                            }
+                        }
+                    }
+                    const correct = errorMsg === '';
+                    showTextResult(correct, correct ? `¡Perfecto! Palabras: ${wordCount}` : errorMsg);
+                    tally(correct);
+                    if (correct) {
+                        toast('Respuesta correcta');
+                        $('#btnCheck').style.display = 'none';
+                        $('#btnNext').style.display = 'inline-flex';
+                        CURRENT.answered = true;
+                    } else {
+                        toast('Respuesta incorrecta');
+                        $('#btnCheck').style.display = 'inline-flex';
+                        $('#btnNext').style.display = 'none';
+                        CURRENT.answered = false;
+                    }
+                }
+                else if (CURRENT.mode === 'speaking') {
+                        const said = ($('#asrOut').dataset.text || '').trim();
+                        if (!said) return toast('Pulsa 🎤 y habla');
+                        const target = $('#activityContainer').dataset.correct || '';
+                        const sim = similarity(said.toLowerCase(), target.toLowerCase());
+                        const orderOk = orderPreserved(target, said);
+                        const correct = (sim > 0.82) && orderOk;
+                        let msg = `Objetivo: "${target}"\nTú dijiste: "${said}"\nSimilitud: ${(sim * 100).toFixed(0)}%`;
+                        if (!orderOk) msg += '\nOrden de palabras incorrecto.';
+                        showTextResult(correct, msg);
+                        tally(correct);
+                    if (correct) {
+                        toast('Respuesta correcta');
+                        $('#btnCheck').style.display = 'none';
+                        $('#btnNext').style.display = 'inline-flex';
+                        CURRENT.answered = true;
+                    } else {
+                        toast('Respuesta incorrecta');
+                        $('#btnCheck').style.display = 'inline-flex';
+                        $('#btnNext').style.display = 'none';
+                        CURRENT.answered = false;
+                    }
+                }
+            }
+
+            function nextItem() { CURRENT.index++; CURRENT.answered = false; selectedIndex = -1; renderCurrent(); }
+
+            function markChoices(ok, tip) {
+                const box = $('.choices');
+                $$('.choice', box).forEach((b, i) => {
+                    b.classList.toggle('correct', i === selectedIndex && ok);
+                    b.classList.toggle('wrong', i === selectedIndex && !ok);
+                    if (i === selectedIndex && !ok) b.title = tip || '';
+                });
+            }
+
+            function showTextResult(ok, msg) {
+                // Borra mensajes anteriores
+                const container = $('#activityContainer');
+                // Elimina cualquier div con la clase 'pill' y cualquier <pre> generado por showTextResult
+                $$('.pill', container).forEach(el => el.remove());
+                $$('pre', container).forEach(el => el.remove());
+
+                // Muestra solo el resultado actual
+                const div = document.createElement('div');
+                div.className = 'pill';
+                div.style.borderColor = ok ? 'var(--ok)' : 'var(--err)';
+                div.style.background = ok ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)';
+                div.textContent = ok ? '¡Bien hecho! ✅' : 'Sigue intentando ❌';
+                const p = document.createElement('pre');
+                p.textContent = msg;
+                p.style.whiteSpace = 'pre-wrap';
+                p.style.marginTop = '8px';
+                p.style.color = 'var(--muted)';
+                container.append(div, p);
+            }
+
+            function tally(ok) {
+                if (ok) { STATE.xp += 5; STATE.correct++; } else { STATE.xp += 2; }
+                save(); refreshUI();
+            }
+
+            function gainXP(n) { STATE.xp += n; save(); refreshUI(); toast('¡+ ' + n + ' XP!'); }
+
+            function maybeBadge() {
+                const s = Number(localStorage.getItem('lingrow_streak') || 0);
+                if (s >= 3 && !STATE.badges.includes('🔥 Racha 3')) STATE.badges.push('🔥 Racha 3');
+                if (STATE.xp >= 100 && !STATE.badges.includes('⭐ 100 XP')) STATE.badges.push('⭐ 100 XP');
+                save(); refreshUI();
+            }
+
+            // Modal
+            function openModal() { $('#modal').classList.add('open'); }
+            function closeModal() { $('#modal').classList.remove('open'); }
+
+            // Utilidades varias
+            function shuffle(a) { return a.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(x => x[1]); }
+            function similarity(a, b) {
+                // Dice coefficient sobre bigramas
+                const bg = s => { const r = new Set(); for (let i = 0; i < s.length - 1; i++) r.add(s.slice(i, i + 2)); return r; };
+                const A = bg(a), B = bg(b); let inter = 0; A.forEach(v => { if (B.has(v)) inter++; });
+                return (2 * inter) / (A.size + B.size || 1);
+            }
+
+            // Normaliza y separa en palabras (quita puntuación básica)
+            function normalizeWords(s) {
+                if (!s) return [];
+                return s
+                    .toLowerCase()
+                    .replace(/["'“”’()\[\],;:\.\!?]/g, '')
+                    .replace(/[^a-z0-9áéíóúüñ\s-]/g, '')
+                    .split(/\s+/)
+                    .filter(Boolean);
+            }
+
+            // Comprueba que las palabras del target aparecen en el said
+            // en el mismo orden (subsecuencia). Devuelve true si se cumple.
+            function orderPreserved(target, said) {
+                const T = normalizeWords(target);
+                const S = normalizeWords(said);
+                if (T.length === 0) return false;
+                let pos = 0;
+                for (let i = 0; i < T.length; i++) {
+                    const w = T[i];
+                    let found = false;
+                    while (pos < S.length) {
+                        if (S[pos] === w) { found = true; pos++; break; }
+                        pos++;
+                    }
+                    if (!found) return false;
+                }
+                return true;
+            }
+
+            // TTS (listening)
+            function speak(text) {
+                if (!('speechSynthesis' in window)) return toast('Tu navegador no soporta TTS');
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US'; u.rate = 0.95; u.pitch = 1;
+                window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+            }
+
+            // ASR (speaking)
+            function startRecognition() {
+                const out = $('#asrOut');
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SR) { out.textContent = 'ASR no soportado en este navegador.'; return; }
+                const r = new SR(); r.lang = 'en-US'; r.interimResults = false; r.maxAlternatives = 1;
+                r.onresult = (e) => { const text = e.results[0][0].transcript; out.textContent = 'Tú dijiste: "' + text + '"'; out.dataset.text = text; };
+                r.onerror = () => { out.textContent = 'Error al escuchar. Intenta de nuevo.'; };
+                r.start(); out.textContent = 'Escuchando… habla ahora';
+            }
+
+            // Micro notificaciones
+            function toast(msg) {
+                const el = document.createElement('div');
+                el.textContent = msg; el.style.position = 'fixed'; el.style.bottom = '20px'; el.style.left = '50%'; el.style.transform = 'translateX(-50%)';
+                el.style.background = 'rgba(17,24,39,.95)'; el.style.border = '1px solid #334155'; el.style.padding = '10px 14px'; el.style.borderRadius = '12px'; el.style.boxShadow = 'var(--shadow)';
+                document.body.appendChild(el); setTimeout(() => el.remove(), 1800);
+            }
+
+            // Init
+            refreshUI();
+        </script>
+    </body>
+
+    </html>
